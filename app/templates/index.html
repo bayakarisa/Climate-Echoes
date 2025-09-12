@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+  <section class="hero hero-bg">
+    <div class="hero-content">
+      <h1>Climate Echoes – Amplifying youth voices on climate justice through creative expression</h1>
+      <p class="lead">A modern, clean, minimalist hub for youth climate creativity.</p>
+      <div class="cta-buttons">
+        <a class="btn primary" href="{{ url_for('main.submit') }}">Submit Work</a>
+        <a class="btn secondary" href="{{ url_for('main.gallery') }}">View Gallery</a>
+        <a class="btn ghost" href="{{ url_for('main.about') }}">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="highlights">
+    <div class="card-grid">
+      <div class="card">
+        <h3>Submissions Open</h3>
+        <p>Photography, video, spoken word, music, fashion, AI-assisted art.</p>
+      </div>
+      <div class="card">
+        <h3>Interactive Exhibition</h3>
+        <p>Explore multimedia works, filter by themes like Climate Justice and Indigenous Wisdom.</p>
+      </div>
+      <div class="card">
+        <h3>Community & Workshops</h3>
+        <p>Join creative AI labs and youth-led dialogues with partners worldwide.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="samples">
+    <div class="sample-grid">
+      <figure>
+        <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop" alt="Youth climate art placeholder 1">
+      </figure>
+      <figure>
+        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1200&auto=format&fit=crop" alt="Youth portrait placeholder 2">
+      </figure>
+      <figure>
+        <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1200&auto=format&fit=crop" alt="Forest nature placeholder 3">
+      </figure>
+      <figure>
+        <img src="https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=1200&auto=format&fit=crop" alt="Climate protest youth placeholder 4">
+      </figure>
+    </div>
+  </section>
+{% endblock %}
+
+
