@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+  <section class="page-header">
+    <h1>Contact</h1>
+    <p class="lead">Questions, collaborations, or press? Reach out.</p>
+  </section>
+
+  <div class="contact-grid">
+    <form class="form" action="{{ url_for('main.contact') }}" method="post">
+      <label>
+        <span>Name</span>
+        <input type="text" name="name" required>
+      </label>
+      <label>
+        <span>Email</span>
+        <input type="email" name="email" required>
+      </label>
+      <label>
+        <span>Message</span>
+        <textarea name="message" rows="5" required></textarea>
+      </label>
+      <button class="btn primary" type="submit">Send</button>
+    </form>
+
+    <div class="contact-info">
+      <div><strong>Email:</strong> hello@climate-echoes.example</div>
+      <div class="socials">
+        <a href="#">Instagram</a>
+        <a href="#">Twitter/X</a>
+        <a href="#">YouTube</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+
