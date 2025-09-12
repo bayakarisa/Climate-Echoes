@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+  <section class="page-header">
+    <h1>Gallery</h1>
+    <p class="lead">Explore selected works across themes and media.</p>
+  </section>
+
+  <div class="filters">
+    <form method="get" action="{{ url_for('main.gallery') }}">
+      <label>
+        <span>Filter by theme</span>
+        <select name="theme" onchange="this.form.submit()">
+          <option value="">All</option>
+          {% for t in themes %}
+            <option value="{{ t }}" {% if theme == t %}selected{% endif %}>{{ t }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </form>
+  </div>
+
+  <div class="gallery-grid">
+    {% for s in submissions %}
+      <article class="tile">
+        <div class="media">
+          {% if s.media_type == 'image' %}
+            <img src="{{ url_for('static', filename='uploads/' ~ s.filename) }}" alt="{{ s.description }}">
+          {% elif s.media_type == 'video' %}
+            <video controls preload="metadata">
+              <source src="{{ url_for('static', filename='uploads/' ~ s.filename) }}">
+            </video>
+          {% elif s.media_type == 'audio' %}
+            <audio controls>
+              <source src="{{ url_for('static', filename='uploads/' ~ s.filename) }}">
+            </audio>
+          {% else %}
+            <a class="text-link" href="{{ url_for('static', filename='uploads/' ~ s.filename) }}" target="_blank">View text submission</a>
+          {% endif %}
+        </div>
+        <div class="meta">
+          <h3>{{ s.category }} {% if s.theme %}<span class="pill">{{ s.theme }}</span>{% endif %}</h3>
+          <p class="desc">{{ s.description }}</p>
+          <div class="byline">By {{ s.name }} · {{ s.country }}</div>
+        </div>
+      </article>
+    {% else %}
+      <p>No submissions yet. Be the first to <a href="{{ url_for('main.submit') }}">submit your work</a>.</p>
+    {% endfor %}
+  </div>
+{% endblock %}
+
+

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Climate Echoes: Voices of a Generation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="{{ url_for('main.index') }}">Climate Echoes</a>
+        <nav>
+          <a href="{{ url_for('main.about') }}">About</a>
+          <a href="{{ url_for('main.submit') }}">Submit</a>
+          <a href="{{ url_for('main.gallery') }}">Gallery</a>
+          <a href="{{ url_for('main.events') }}">Events</a>
+          <a href="{{ url_for('main.partners') }}">Partners</a>
+          <a href="{{ url_for('main.contact') }}">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash">
+            {% for category, message in messages %}
+              <div class="flash-item {{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <div class="brand">Climate Echoes</div>
+          <p class="tagline">Amplifying youth voices on climate justice through creative expression.</p>
+        </div>
+        <div>
+          <div class="footer-title">Quick Links</div>
+          <ul>
+            <li><a href="{{ url_for('main.about') }}">About</a></li>
+            <li><a href="{{ url_for('main.submit') }}">Submit</a></li>
+            <li><a href="{{ url_for('main.gallery') }}">Gallery</a></li>
+            <li><a href="{{ url_for('main.contact') }}">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-title">Follow</div>
+          <div class="socials">
+            <a href="#" aria-label="Instagram">IG</a>
+            <a href="#" aria-label="Twitter">X</a>
+            <a href="#" aria-label="YouTube">YT</a>
+          </div>
+          <div class="note">In collaboration with Earth Partner.</div>
+        </div>
+      </div>
+      <div class="container fineprint">© {{ 2025 }} Climate Echoes</div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  </body>
+  </html>
+
+

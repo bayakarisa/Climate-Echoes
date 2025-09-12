@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+  <section class="page-header">
+    <h1>Submit Your Work</h1>
+    <p class="lead">Share your creative response to climate justice.</p>
+  </section>
+  <form class="form" action="{{ url_for('main.submit') }}" method="post" enctype="multipart/form-data">
+    <div class="grid">
+      <label>
+        <span>Name</span>
+        <input type="text" name="name" required>
+      </label>
+      <label>
+        <span>Age</span>
+        <input type="number" name="age" min="14" max="30" required>
+      </label>
+      <label>
+        <span>Country</span>
+        <input type="text" name="country" required>
+      </label>
+      <label>
+        <span>Category</span>
+        <select name="category" required>
+          <option value="">Select</option>
+          <option>Photography</option>
+          <option>Video</option>
+          <option>Spoken Word</option>
+          <option>Music</option>
+          <option>Fashion</option>
+          <option>AI-assisted Art</option>
+          <option>Text</option>
+        </select>
+      </label>
+      <label>
+        <span>Theme</span>
+        <select name="theme">
+          <option value="">Select (optional)</option>
+          <option>Climate Anxiety</option>
+          <option>Indigenous Wisdom</option>
+          <option>Greenwashing</option>
+          <option>Climate Justice</option>
+        </select>
+      </label>
+      <label class="full">
+        <span>Short Description</span>
+        <textarea name="description" rows="4" required></textarea>
+      </label>
+      <label class="full">
+        <span>Upload File</span>
+        <input type="file" name="file" accept="image/*,video/*,audio/*,.txt,.md" required>
+      </label>
+    </div>
+    <button class="btn primary" type="submit">Submit</button>
+  </form>
+{% endblock %}
+
+

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Climate Echoes: Voices of a Generation</h1>
+      <p class="lead">Amplifying youth voices on climate justice through creative expression</p>
+      <div class="cta-buttons">
+        <a class="btn primary" href="{{ url_for('main.submit') }}">Submit Work</a>
+        <a class="btn secondary" href="{{ url_for('main.gallery') }}">View Gallery</a>
+        <a class="btn ghost" href="{{ url_for('main.about') }}">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="highlights">
+    <div class="card-grid">
+      <div class="card">
+        <h3>Submissions Open</h3>
+        <p>Photography, video, spoken word, music, fashion, AI-assisted art.</p>
+      </div>
+      <div class="card">
+        <h3>Interactive Exhibition</h3>
+        <p>Explore multimedia works, filter by themes like Climate Justice and Indigenous Wisdom.</p>
+      </div>
+      <div class="card">
+        <h3>Community & Workshops</h3>
+        <p>Join creative AI labs and youth-led dialogues with partners worldwide.</p>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+
