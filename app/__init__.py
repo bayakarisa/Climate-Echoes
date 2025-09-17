@@ -1,5 +1,6 @@
 from flask import Flask
 import os
+from .utils import close_db
 
 
 def create_app():
@@ -16,6 +17,9 @@ def create_app():
 
     from .routes import bp as main_bp
     app.register_blueprint(main_bp)
+
+    # DB lifecycle
+    app.teardown_appcontext(close_db)
 
     return app
 

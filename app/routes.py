@@ -2,8 +2,9 @@ import json
 import os
 import uuid
 from datetime import datetime
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, make_response
 from werkzeug.utils import secure_filename
+from .utils import fetch_all, fetch_one, execute, create_session, get_current_user
 
 bp = Blueprint('main', __name__)
 
@@ -64,8 +65,18 @@ def about():
     return render_template('about.html')
 
 
+def login_required():
+    user = get_current_user()
+    if not user:
+        return False
+    return True
+
+
 @bp.route('/submit', methods=['GET', 'POST'])
 def submit():
+    if not login_required():
+        flash('Please log in to submit your work.', 'error')
+        return redirect(url_for('main.login'))
     if request.method == 'POST':
         name = request.form.get('name', '').strip()
         age = request.form.get('age', '').strip()
@@ -99,20 +110,15 @@ def submit():
 
         media_type = detect_media_type(filename)
 
-        submissions = load_json(SUBMISSIONS_FILE)
-        submissions.append({
-            'id': uuid.uuid4().hex,
-            'name': name,
-            'age': age_int,
-            'country': country,
-            'category': category,
-            'theme': theme,
-            'description': description,
-            'filename': unique_name,
-            'media_type': media_type,
-            'created_at': datetime.utcnow().isoformat() + 'Z'
-        })
-        save_json(SUBMISSIONS_FILE, submissions)
+        # store to projects and uploads tables if present
+        project_id = execute(
+            "INSERT INTO projects(title, description, theme, created_at, status) VALUES(?, ?, ?, ?, ?)",
+            (category, description, theme, datetime.utcnow().isoformat() + 'Z', 'pending')
+        )
+        execute(
+            "INSERT INTO uploads(project_id, file_name, media_type, created_at) VALUES(?, ?, ?, ?)",
+            (project_id, unique_name, media_type, datetime.utcnow().isoformat() + 'Z')
+        )
 
         flash('Thank you! Your submission was received.', 'success')
         return redirect(url_for('main.gallery'))
@@ -122,13 +128,30 @@ def submit():
 
 @bp.route('/gallery')
 def gallery():
+    if not login_required():
+        flash('Please log in to view the gallery.', 'error')
+        return redirect(url_for('main.login'))
     theme = request.args.get('theme', '').strip()
-    submissions = load_json(SUBMISSIONS_FILE)
+    try:
+        rows = fetch_all(
+            "SELECT p.id, p.title as category, p.description, p.theme, u.file_name as filename, u.media_type, p.created_at FROM projects p LEFT JOIN uploads u ON u.project_id = p.id WHERE p.status = 'approved'"
+        )
+        submissions = []
+        for r in rows:
+            submissions.append({
+                'category': r['category'],
+                'description': r['description'],
+                'theme': r['theme'],
+                'filename': r['filename'],
+                'media_type': r['media_type'],
+                'created_at': r['created_at']
+            })
+    except Exception:
+        submissions = []
     if theme:
-        submissions = [s for s in submissions if s.get('theme', '').lower() == theme.lower()]
-    # Sort newest first
+        submissions = [s for s in submissions if (s.get('theme') or '').lower() == theme.lower()]
     submissions.sort(key=lambda s: s.get('created_at', ''), reverse=True)
-    themes = sorted({s.get('theme', '').strip() for s in submissions if s.get('theme')})
+    themes = sorted({(s.get('theme') or '').strip() for s in submissions if s.get('theme')})
     return render_template('gallery.html', submissions=submissions, theme=theme, themes=themes)
 
 
@@ -171,5 +194,67 @@ def contact():
         return redirect(url_for('main.contact'))
 
     return render_template('contact.html')
+
+
+# Authentication routes
+@bp.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '').strip()
+        if not email or not password:
+            flash('Email and password are required.', 'error')
+            return redirect(url_for('main.login'))
+        user = fetch_one("SELECT * FROM users WHERE email = ?", (email,))
+        if not user or (user and user.get('password') and user['password'] != password):
+            flash('Invalid credentials.', 'error')
+            return redirect(url_for('main.login'))
+        token, _ = create_session(user['id'])
+        resp = make_response(redirect(url_for('main.index')))
+        resp.set_cookie('session_token', token, httponly=True, samesite='Lax')
+        return resp
+    return render_template('login.html')
+
+
+@bp.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip()
+        country = request.form.get('country', '').strip()
+        dob = request.form.get('dob', '').strip()
+        password = request.form.get('password', '').strip()
+        terms = request.form.get('terms')
+        if not name or not email or not country or not dob or not password or not terms:
+            flash('All fields and terms acceptance are required.', 'error')
+            return redirect(url_for('main.signup'))
+        # naive age check from dob (YYYY-MM-DD)
+        try:
+            year = int(dob.split('-')[0])
+            age = datetime.utcnow().year - year
+            if age < 14 or age > 30:
+                flash('Age must be between 14 and 30.', 'error')
+                return redirect(url_for('main.signup'))
+        except Exception:
+            flash('Invalid date of birth.', 'error')
+            return redirect(url_for('main.signup'))
+        try:
+            execute(
+                "INSERT INTO users(name, email, country, dob, password, created_at) VALUES(?, ?, ?, ?, ?, ?)",
+                (name, email, country, dob, password, datetime.utcnow().isoformat() + 'Z')
+            )
+        except Exception:
+            flash('Email already exists or database error.', 'error')
+            return redirect(url_for('main.signup'))
+        flash('Account created. Please log in.', 'success')
+        return redirect(url_for('main.login'))
+    return render_template('signup.html')
+
+
+@bp.route('/logout')
+def logout():
+    resp = make_response(redirect(url_for('main.index')))
+    resp.delete_cookie('session_token')
+    return resp
 
 
