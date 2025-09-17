@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+  <section class="page-header">
+    <h1>Create your account</h1>
+    <p class="lead">Sign up to submit and explore the gallery.</p>
+  </section>
+  <div class="two-col">
+    <form class="form" method="post" action="{{ url_for('main.signup') }}">
+      <label>
+        <span>Full name</span>
+        <input type="text" name="name" required>
+      </label>
+      <label>
+        <span>Email</span>
+        <input type="email" name="email" required>
+      </label>
+      <label>
+        <span>Country</span>
+        <input type="text" name="country" required>
+      </label>
+      <label>
+        <span>Date of birth</span>
+        <input type="date" name="dob" required>
+      </label>
+      <label>
+        <span>Password</span>
+        <input type="password" name="password" required>
+      </label>
+      <label>
+        <input type="checkbox" name="terms" value="yes" required> I agree to the terms and conditions
+      </label>
+      <button class="btn primary" type="submit">Create account</button>
+      <p>Or sign up with:</p>
+      <div class="cta-buttons">
+        <a class="btn secondary" href="#">Google</a>
+        <a class="btn secondary" href="#">LinkedIn</a>
+      </div>
+      <p>Already have an account? <a href="{{ url_for('main.login') }}">Log in</a></p>
+    </form>
+  </div>
+{% endblock %}
+
+

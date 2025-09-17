@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+  <section class="page-header">
+    <h1>Log in</h1>
+    <p class="lead">Access submissions and the gallery.</p>
+  </section>
+  <div class="two-col">
+    <form class="form" method="post" action="{{ url_for('main.login') }}">
+      <label>
+        <span>Email</span>
+        <input type="email" name="email" required>
+      </label>
+      <label>
+        <span>Password</span>
+        <input type="password" name="password" required>
+      </label>
+      <button class="btn primary" type="submit">Log in</button>
+      <p>Or continue with:</p>
+      <div class="cta-buttons">
+        <a class="btn secondary" href="#">Google</a>
+        <a class="btn secondary" href="#">LinkedIn</a>
+      </div>
+      <p>Don't have an account? <a href="{{ url_for('main.signup') }}">Sign up</a></p>
+    </form>
+  </div>
+{% endblock %}
+
+
